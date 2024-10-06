@@ -1,0 +1,33 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Hibernation"
+        xmlns:System="clr-namespace:System;assembly=System.Runtime" x:Class="Hibernation.MainWindow"
+        mc:Ignorable="d"
+        Title="休止状態/スリープ設定" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal">
+            <Label RenderTransformOrigin="-5.591,-0.12" Content="スリープ時間：" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <ComboBox x:Name="SleepComboBox" Width="120" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <ComboBoxItem Content="無効" Tag="0"/>
+                <ComboBoxItem Content="15分" Tag="15"/>
+                <ComboBoxItem Content="30分" Tag="30"/>
+                <ComboBoxItem Content="45分" Tag="45"/>
+                <ComboBoxItem Content="1時間" Tag="60"/>
+                <ComboBoxItem Content="1時間30分" Tag="90"/>
+                <ComboBoxItem Content="2時間" Tag="120"/>
+                <ComboBoxItem Content="3時間" Tag="180"/>
+                <ComboBoxItem Content="4時間" Tag="240"/>
+                <ComboBoxItem Content="5時間" Tag="300"/>
+                <ComboBoxItem Content="6時間" Tag="360"/>
+            </ComboBox>
+        </StackPanel>
+    </Grid>
+</Window>
