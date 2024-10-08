@@ -7,18 +7,40 @@ using System.Threading.Tasks;
 
 namespace Hibernation
 {
+    /// <summary>
+    /// powercfgコマンドによるスタンバイや休止状態までの時間の管理
+    /// </summary>
     class PowerConfig
     {
-        public String Text { get; set; } = String.Empty;
+        private static readonly string GetActiveScheme = "/GETACTIVESCHEME";
+        ///<value>スリープのGUIDのエイリアス</value>
+        private static readonly string SubSleep = "SUB_SLEEP";
+        ///<value>スタンバイのGUIDのエイリアス</value>
+        private static readonly string StandbyIdle = "STANDBYIDLE";
+        ///<value>休止状態のGUIDのエイリアス</value>
+        private static readonly string HibernationIdle = "HIBERNATEIDLE";
+        ///<value>電源設定のGUID</value>
+        private string SchemeGUID {  get; set; } = string.Empty;
+        /// <value>powercfgの出力</value>
+        public string OutputText { get; set; } = string.Empty;
         public PowerConfig() { }
 
-        protected bool CallPowerCfg(String Arg)
+        /// <summary>
+        /// powercfgコマンドの実行
+        /// </summary>
+        /// <param name="options">powercfgコマンドのコマンドオプション</param>
+        /// <returns>
+        /// powercfgコマンドの実行結果</br>
+        /// true: 成功</br>
+        /// false: 失敗
+        /// </returns>
+        protected bool CallPowerCfg(string options)
         {
             bool rc = true;
 
             ProcessStartInfo info = new ProcessStartInfo();
             info.FileName = "powercfg";
-            info.Arguments = Arg;
+            info.Arguments = options;
             info.RedirectStandardOutput = true;
             info.UseShellExecute = false;
             info.CreateNoWindow = true;
@@ -28,7 +50,7 @@ namespace Hibernation
                 var cmd = Process.Start(info);
                 if (cmd != null)
                 {
-                    Text = cmd.StandardOutput.ReadToEnd();
+                    OutputText = cmd.StandardOutput.ReadToEnd();
                     cmd.WaitForExit();
                 }
             }

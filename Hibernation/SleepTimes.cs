@@ -8,8 +8,8 @@ namespace Hibernation
 {
     internal class SleepTimes
     {
-        public UInt32 SleepTime { get; set; } = 0;
-        public UInt32 HibernationTime { get; set; } = 0;
+        public uint SleepTime { get; set; } = 0;
+        public uint HibernationTime { get; set; } = 0;
 
         public SleepTimes() { }
 
