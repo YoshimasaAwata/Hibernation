@@ -11,7 +11,7 @@ namespace Hibernation
     /// <summary>
     /// powercfgコマンドによるスタンバイや休止状態までの時間の管理
     /// </summary>
-    class PowerConfig
+    public class PowerConfig
     {
         ///<value>16進数の数値を抽出するための正規表現</value>
         private static readonly string HexadecimalRegEx = @"0x[0-9a-zA-Z]{8}";
@@ -29,10 +29,17 @@ namespace Hibernation
         private static readonly string StandbyIdle = "STANDBYIDLE";
         ///<value>休止状態のGUIDのエイリアス</value>
         private static readonly string HibernationIdle = "HIBERNATEIDLE";
+
         ///<value>電源設定のGUID</value>
-        private string SchemeGUID { get; set; } = string.Empty;
+        protected string SchemeGUID { get; set; } = string.Empty;
         /// <value>powercfgの出力</value>
-        public string OutputText { get; set; } = string.Empty;
+        protected string OutputText { get; set; } = string.Empty;
+        /// <value>エラー発生時のメッセージ</value>
+        public string ErrorMessage { get; set; } = string.Empty;
+        
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
         public PowerConfig() { GetActiveSchemeGUID(); }
 
         /// <summary>
@@ -66,6 +73,7 @@ namespace Hibernation
             }
             catch
             {
+                ErrorMessage = "Failed calling powercfg";
                 rc = false;
             }
 
@@ -88,7 +96,7 @@ namespace Hibernation
             }
             catch
             {
-                /// 何もしない
+                // 何もしない
             }
         }
 
@@ -116,7 +124,7 @@ namespace Hibernation
             }
             catch
             {
-                /// 何もしない
+                // 何もしない
             }
             return time;
         }
