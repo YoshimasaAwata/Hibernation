@@ -16,6 +16,8 @@ namespace Hibernation
     /// </summary>
     public partial class MainWindow : Window
     {
+        protected SleepTimes SleepTimes { get; set; } = new SleepTimes();
+
         public MainWindow()
         {
             InitializeComponent();

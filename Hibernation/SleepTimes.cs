@@ -6,12 +6,17 @@ using System.Threading.Tasks;
 
 namespace Hibernation
 {
-    internal class SleepTimes
+    public class SleepTimes
     {
         public uint SleepTime { get; set; } = 0;
         public uint HibernationTime { get; set; } = 0;
 
-        public SleepTimes() { }
+        protected PowerConfig PowerConfig { get; set; } = new PowerConfig();
+
+        public SleepTimes() {
+            SleepTime = PowerConfig.GetStandbyTime();
+            HibernationTime = PowerConfig.GetHibernationTime();
+        }
 
 
     }

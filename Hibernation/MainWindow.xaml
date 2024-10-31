@@ -6,12 +6,13 @@
         xmlns:local="clr-namespace:Hibernation"
         xmlns:System="clr-namespace:System;assembly=System.Runtime" x:Class="Hibernation.MainWindow"
         mc:Ignorable="d"
-        Title="休止状態/スリープ設定" Height="200" Width="460">
+        Title="休止状態/スリープ設定" Height="300" Width="460">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition/>
-            <RowDefinition/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
         <Grid Margin="10">
             <Grid.ColumnDefinitions>
@@ -19,10 +20,10 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Label RenderTransformOrigin="-5.591,-0.12" Content="スリープ時間：" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-            <Slider x:Name="SleepSlider" VerticalAlignment="Center" Grid.Column="1"/>
+            <Label RenderTransformOrigin="-5.591,-0.12" Content="スタンバイ時間：" VerticalAlignment="Center" HorizontalAlignment="Left" Width="96" HorizontalContentAlignment="Right"/>
+            <Slider x:Name="StandbySlider" VerticalAlignment="Center" Grid.Column="1"/>
             <Border BorderBrush="Black" BorderThickness="1" Grid.Column="2" VerticalAlignment="Center">
-                <TextBlock x:Name="SleepTextBlock" TextWrapping="Wrap" Text="0" Width="60" TextAlignment="Right"/>
+                <TextBlock x:Name="StandbyTextBlock" TextWrapping="Wrap" Text="0" Width="60" TextAlignment="Right"/>
             </Border>
         </Grid>
         <Grid Margin="10,10,10,10" Grid.Row="1">
@@ -31,17 +32,26 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Label RenderTransformOrigin="-5.591,-0.12" Content="　休止時間：" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+            <Label RenderTransformOrigin="-5.591,-0.12" Content="　休止時間：" VerticalAlignment="Center" HorizontalAlignment="Left" Width="100" HorizontalContentAlignment="Right"/>
             <Slider x:Name="HibernationSlider" VerticalAlignment="Center" Grid.Column="1"/>
             <Border BorderBrush="Black" BorderThickness="1" Grid.Column="2" VerticalAlignment="Center">
                 <TextBlock x:Name="HibernationTextBlock" TextWrapping="Wrap" Text="0" Width="60" TextAlignment="Right"/>
             </Border>
         </Grid>
-        <StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right" FlowDirection="RightToLeft" Margin="10">
+        <StackPanel Grid.Row="3" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right" FlowDirection="RightToLeft" Margin="10">
             <Button x:Name="OKButton" Content="OK" HorizontalAlignment="Center" VerticalAlignment="Center" Height="20" Width="60" Margin="5" IsDefault="True"/>
             <Button x:Name="CancelButton" Content="Cancel" HorizontalAlignment="Center" VerticalAlignment="Center" Height="20" Width="60" Margin="5"/>
             <Button x:Name="ClearButton" Content="Clear" HorizontalAlignment="Center" VerticalAlignment="Center" Height="20" Width="60" Margin="5"/>
             <Button x:Name="RestoreButton" Content="Restore" HorizontalAlignment="Center" VerticalAlignment="Center" Height="20" Width="60" Margin="5"/>
+            <Button x:Name="SaveButton" Content="Save" HorizontalAlignment="Center" VerticalAlignment="Center" Height="20" Width="60" Margin="5"/>
         </StackPanel>
+        <Grid Margin="10" Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="60"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Label Content="ステータス: " HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            <StatusBar x:Name="Status" Grid.Column="1"/>
+        </Grid>
     </Grid>
 </Window>
