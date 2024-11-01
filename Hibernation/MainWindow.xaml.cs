@@ -355,5 +355,38 @@ namespace Hibernation
             }
             return;
         }
+
+        /// <summary>
+        /// スリープ時間をリストア
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void RestoreButton_Click(object sender, RoutedEventArgs e)
+        {
+            WriteStatus();
+            Properties.Settings.Default.Reload();
+            SetStandbyTime(Properties.Settings.Default.StandbyTime);
+            SetHibernationTime(Properties.Settings.Default.HibernationTime);
+            WriteStatus("スリープ時間をリストアしました");
+            return;
+        }
+
+        /// <summary>
+        /// スリープ時間をストア
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            WriteStatus();
+            if (SleepTimes != null)
+            {
+                Properties.Settings.Default.StandbyTime = SleepTimes.StandbyTime;
+                Properties.Settings.Default.HibernationTime = SleepTimes.HibernationTime;
+                Properties.Settings.Default.Save();
+                WriteStatus("スリープ時間をストアしました");
+            }
+            return;
+        }
     }
 }
