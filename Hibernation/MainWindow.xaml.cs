@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -17,6 +18,16 @@ namespace Hibernation
     public partial class MainWindow : Window
     {
         /// <summary>
+        /// 警告レベル
+        /// </summary>
+        enum Level
+        {
+            Normal,         /// <summary>警告なし</summary> 
+            Caution,        /// <summary>注意</summary>
+            Warning,        /// <summary>警告</summary>
+        }
+
+        /// <summary>
         /// スリープ時間を管理
         /// </summary>
         protected SleepTimes SleepTimes { get; set; } = new SleepTimes();
@@ -28,30 +39,58 @@ namespace Hibernation
         {
             InitializeComponent();
 
-            StandbyTextBlock.Text = SleepTimes.StandbyTime.ToString();
+            StandbyTextBox.Text = SleepTimes.StandbyTime.ToString();
             StandbySlider.Value = SleepTimes.StandbyTime;
-            HibernationTextBlock.Text = SleepTimes.HibernationTime.ToString();
+            HibernationTextBox.Text = SleepTimes.HibernationTime.ToString();
             HibernationSlider.Value = SleepTimes.HibernationTime;
         }
 
-        /// <summary>
-        /// スリープ時間を設定後、ダイアログをクローズ
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void OKButton_Click(object sender, RoutedEventArgs e)
+        private void WriteStatus(string text, Level level = Level.Normal)
         {
-            Close();
+            if (level == Level.Normal)
+            {
+                StatusTextBlock.Foreground = Brushes.Black;
+            }
+            else if (level == Level.Caution)
+            {
+                StatusTextBlock.Foreground = Brushes.Yellow;
+            }
+            else
+            {
+                StatusTextBlock.Foreground = Brushes.Red;
+            }
+            StatusTextBlock.Text = text;
+            return;
         }
 
         /// <summary>
-        /// 何もせずにダイアログをクローズ
+        /// ダイアログをクローズ
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void CancelButton_Click(object sender, RoutedEventArgs e)
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             Close();
+            return;
+        }
+
+        /// <summary>
+        /// 指定のスリープ時間をセット
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SetButton_Click(object sender, RoutedEventArgs e)
+        {
+            var rc = SleepTimes.SetSleepTime();
+            if (rc)
+            {
+                WriteStatus("スリープ時間のセットに成功");
+            }
+            else
+            {
+                WriteStatus("スリープ時間のセットに失敗", Level.Warning);
+            }
+            return;
         }
 
         /// <summary>
@@ -60,16 +99,19 @@ namespace Hibernation
         /// <param name="time">セットするスタンバイ時間</param>
         private void SetStandbyTime(uint time = 0)
         {
-            if ((time == 0) || (time < SleepTimes.HibernationTime))
+            var rc = SleepTimes.SetStandbyTime(time);
+            if (rc)
             {
-                StandbyTextBlock.Text = time.ToString();
+                StandbyTextBox.Text = time.ToString();
                 StandbySlider.Value = time;
-                SleepTimes.StandbyTime = time;
             }
             else
             {
-                StatusTextBlock.Text = "休止時間より長い時間を設定しようとしています";
+                WriteStatus(SleepTimes.ErrorMessage, Level.Warning);
+                StandbyTextBox.Text = SleepTimes.StandbyTime.ToString();
+                StandbySlider.Value = SleepTimes.StandbyTime;
             }
+            return;
         }
 
         /// <summary>
@@ -78,16 +120,19 @@ namespace Hibernation
         /// <param name="time">セットする休止時間</param>
         private void SetHibernationTime(uint time = 0)
         {
-            if ((time == 0) || (time > SleepTimes.StandbyTime))
+            var rc = SleepTimes.SetHibernationTime(time);
+            if (rc)
             {
-                HibernationTextBlock.Text = SleepTimes.HibernationTime.ToString();
-                StandbySlider.Value = SleepTimes.StandbyTime;
-                SleepTimes.StandbyTime = time;
+                HibernationTextBox.Text = time.ToString();
+                HibernationSlider.Value = time;
             }
             else
             {
-                StatusTextBlock.Text = "休止時間より長い時間を設定しようとしています";
+                WriteStatus(SleepTimes.ErrorMessage, Level.Warning);
+                HibernationTextBox.Text = SleepTimes.HibernationTime.ToString();
+                HibernationSlider.Value = SleepTimes.HibernationTime;
             }
+            return;
         }
 
         /// <summary>
@@ -97,8 +142,143 @@ namespace Hibernation
         /// <param name="e"></param>
         private void ClearAllButton_Click(object sender, RoutedEventArgs e)
         {
-            HibernationTextBlock.Text = SleepTimes.HibernationTime.ToString();
-            HibernationSlider.Value = SleepTimes.HibernationTime;
+            SetStandbyTime();
+            SetHibernationTime();
+            return;
+        }
+
+        /// <summary>
+        /// スタンバイ時間を0(スタンバイなし)とする
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ClearStandbyButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetStandbyTime();
+        }
+
+        /// <summary>
+        /// 休止時間を0(休止なし)とする
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ClearHibernationButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetHibernationTime();
+        }
+
+        /// <summary>
+        /// スタンバイ時間をスライダーでセットされた場合
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void StandbySlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            var time = (uint)StandbySlider.Value;
+            SetStandbyTime(time);
+            return;
+        }
+
+        /// <summary>
+        /// 休止時間をスライダーでセットされた場合
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void HibernationSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            var time = (uint)HibernationSlider.Value;
+            SetHibernationTime(time);
+            return;
+        }
+
+        /// <summary>
+        /// スタンバイ時間の入力を数字のみに限定
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void StandbyTextBox_TextInput(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = !new Regex("[0-9]").IsMatch(e.Text);
+            return;
+        }
+
+        /// <summary>
+        /// 休止時間の入力を数字のみに限定
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void HibernationTextBox_TextInput(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = !new Regex("[0-9]").IsMatch(e.Text);
+            return;
+        }
+
+        /// <summary>
+        /// スタンバイ時間の入力にペーストを許可しない
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void StandbyTextBox_PreviewExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (e.Command == ApplicationCommands.Paste)
+            {
+                e.Handled = true;
+            }
+            return;
+        }
+
+        /// <summary>
+        /// 休止時間の入力にペーストを許可しない
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void HibernationTextBox_PreviewExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (e.Command == ApplicationCommands.Paste)
+            {
+                e.Handled = true;
+            }
+            return;
+        }
+
+        /// <summary>
+        /// スタンバイ時間の入力対応
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void StandbyTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            try
+            {
+                var time_text = StandbyTextBox.Text;
+                var time = UInt32.Parse(time_text);
+                SetStandbyTime(time);
+            }
+            catch
+            {
+                StandbyTextBox.Text = SleepTimes.StandbyTime.ToString();
+                WriteStatus("数値を入れて下さい");
+            }
+        }
+
+        /// <summary>
+        /// 休止時間の入力対応
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void HibernationTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            try
+            {
+                var time_text = HibernationTextBox.Text;
+                var time = UInt32.Parse(time_text);
+                SetHibernationTime(time);
+            }
+            catch
+            {
+                HibernationTextBox.Text = SleepTimes.HibernationTime.ToString();
+                WriteStatus("数値を入れて下さい");
+            }
         }
     }
 }

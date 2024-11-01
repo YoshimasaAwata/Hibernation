@@ -176,7 +176,7 @@ namespace Hibernation
                 time = 0;
             }
             var hibernation = GetHibernationTime();
-            if ((time == 0) || (hibernation > time))
+            if ((time == 0) || (hibernation == 0) || (hibernation > time))
             {
                 rc = SetSleepTime(StandbyTimeoutAC, time);
             }
@@ -217,7 +217,7 @@ namespace Hibernation
                 time = 0;
             }
             var stanby = GetStandbyTime();
-            if ((time == 0) || (stanby < time))
+            if ((time == 0) || (stanby <= time))
             {
                 rc = SetSleepTime(HibernationTimeoutAC, time);
             }
