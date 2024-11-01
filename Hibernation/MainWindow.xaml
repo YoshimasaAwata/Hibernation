@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Hibernation"
         xmlns:System="clr-namespace:System;assembly=System.Runtime" x:Class="Hibernation.MainWindow"
         mc:Ignorable="d"
-        Title="休止状態/スリープ設定" Height="300" Width="460">
+        Title="休止状態/スリープ設定" Height="300" Width="460" ResizeMode="NoResize">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
@@ -19,39 +19,39 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <Label RenderTransformOrigin="-5.591,-0.12" Content="スタンバイ時間：" VerticalAlignment="Center" HorizontalAlignment="Left" Width="96" HorizontalContentAlignment="Right"/>
-            <Slider x:Name="StandbySlider" VerticalAlignment="Center" Grid.Column="1"/>
+            <Slider x:Name="StandbySlider" VerticalAlignment="Center" Grid.Column="1" Maximum="480" IsSnapToTickEnabled="True" SmallChange="10" TickFrequency="10" LargeChange="10"/>
             <Border BorderBrush="Black" BorderThickness="1" Grid.Column="2" VerticalAlignment="Center">
                 <TextBlock x:Name="StandbyTextBlock" TextWrapping="Wrap" Text="0" Width="60" TextAlignment="Right"/>
             </Border>
+            <Button x:Name="ClearStandbyButton" Content="Clear" Grid.Column="3" VerticalAlignment="Center" Margin="5,0,0,0"/>
         </Grid>
         <Grid Margin="10,10,10,10" Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <Label RenderTransformOrigin="-5.591,-0.12" Content="　休止時間：" VerticalAlignment="Center" HorizontalAlignment="Left" Width="100" HorizontalContentAlignment="Right"/>
-            <Slider x:Name="HibernationSlider" VerticalAlignment="Center" Grid.Column="1"/>
+            <Slider x:Name="HibernationSlider" VerticalAlignment="Center" Grid.Column="1" LargeChange="10" Maximum="480" SmallChange="10" TickFrequency="10" IsSnapToTickEnabled="True"/>
             <Border BorderBrush="Black" BorderThickness="1" Grid.Column="2" VerticalAlignment="Center">
                 <TextBlock x:Name="HibernationTextBlock" TextWrapping="Wrap" Text="0" Width="60" TextAlignment="Right"/>
             </Border>
+            <Button x:Name="ClearHibernationButton" Content="Clear" Grid.Column="3" VerticalAlignment="Center" Margin="5,0,0,0"/>
         </Grid>
         <StackPanel Grid.Row="3" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right" FlowDirection="RightToLeft" Margin="10">
-            <Button x:Name="OKButton" Content="OK" HorizontalAlignment="Center" VerticalAlignment="Center" Height="20" Width="60" Margin="5" IsDefault="True"/>
-            <Button x:Name="CancelButton" Content="Cancel" HorizontalAlignment="Center" VerticalAlignment="Center" Height="20" Width="60" Margin="5"/>
-            <Button x:Name="ClearButton" Content="Clear" HorizontalAlignment="Center" VerticalAlignment="Center" Height="20" Width="60" Margin="5"/>
+            <Button x:Name="OKButton" Content="OK" HorizontalAlignment="Center" VerticalAlignment="Center" Height="20" Width="60" Margin="5" IsDefault="True" Click="OKButton_Click"/>
+            <Button x:Name="CancelButton" Content="Cancel" HorizontalAlignment="Center" VerticalAlignment="Center" Height="20" Width="60" Margin="5" Click="CancelButton_Click"/>
+            <Button x:Name="ClearAllButton" Content="Clear All" HorizontalAlignment="Center" VerticalAlignment="Center" Height="20" Width="60" Margin="5" Click="ClearAllButton_Click"/>
             <Button x:Name="RestoreButton" Content="Restore" HorizontalAlignment="Center" VerticalAlignment="Center" Height="20" Width="60" Margin="5"/>
             <Button x:Name="SaveButton" Content="Save" HorizontalAlignment="Center" VerticalAlignment="Center" Height="20" Width="60" Margin="5"/>
         </StackPanel>
-        <Grid Margin="10" Grid.Row="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="60"/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <Label Content="ステータス: " HorizontalAlignment="Left" VerticalAlignment="Top"/>
-            <StatusBar x:Name="Status" Grid.Column="1"/>
-        </Grid>
+        <StatusBar Grid.Row="2" Margin="10">
+            <Label Content="ステータス: " HorizontalAlignment="Center" VerticalAlignment="Top"/>
+            <TextBlock x:Name="StatusTextBlock" />
+        </StatusBar>
     </Grid>
 </Window>

@@ -8,13 +8,25 @@ namespace Hibernation
 {
     public class SleepTimes
     {
-        public uint SleepTime { get; set; } = 0;
+        /// <summary>
+        /// スタンバイ時間
+        /// </summary>
+        public uint StandbyTime { get; set; } = 0;
+        /// <summary>
+        /// 休止時間
+        /// </summary>
         public uint HibernationTime { get; set; } = 0;
 
+        /// <summary>
+        /// powerconfigコマンドを用いたスリープ時間の設定、取得
+        /// </summary>
         protected PowerConfig PowerConfig { get; set; } = new PowerConfig();
 
+        /// <summary>
+        /// 現在のスリープ時間を取得
+        /// </summary>
         public SleepTimes() {
-            SleepTime = PowerConfig.GetStandbyTime();
+            StandbyTime = PowerConfig.GetStandbyTime();
             HibernationTime = PowerConfig.GetHibernationTime();
         }
 
