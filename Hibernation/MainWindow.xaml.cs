@@ -28,9 +28,14 @@ namespace Hibernation
         }
 
         /// <summary>
+        /// スリープ時間の最大値(分)
+        /// </summary>
+        private static readonly uint MaxSleepTime = 480;
+
+        /// <summary>
         /// スリープ時間を管理
         /// </summary>
-        protected SleepTimes SleepTimes { get; set; } = new SleepTimes();
+        protected SleepTimes? SleepTimes { get; set; } = null;
 
         /// <summary>
         /// 現在のスリープ時間をダイアログに反映
@@ -39,6 +44,7 @@ namespace Hibernation
         {
             InitializeComponent();
 
+            SleepTimes = new SleepTimes();
             StandbyTextBox.Text = SleepTimes.StandbyTime.ToString();
             StandbySlider.Value = SleepTimes.StandbyTime;
             HibernationTextBox.Text = SleepTimes.HibernationTime.ToString();
@@ -81,14 +87,17 @@ namespace Hibernation
         /// <param name="e"></param>
         private void SetButton_Click(object sender, RoutedEventArgs e)
         {
-            var rc = SleepTimes.SetSleepTime();
-            if (rc)
+            if (SleepTimes != null)
             {
-                WriteStatus("スリープ時間のセットに成功");
-            }
-            else
-            {
-                WriteStatus("スリープ時間のセットに失敗", Level.Warning);
+                var rc = SleepTimes.SetSleepTime();
+                if (rc)
+                {
+                    WriteStatus("スリープ時間のセットに成功");
+                }
+                else
+                {
+                    WriteStatus("スリープ時間のセットに失敗", Level.Warning);
+                }
             }
             return;
         }
@@ -99,17 +108,20 @@ namespace Hibernation
         /// <param name="time">セットするスタンバイ時間</param>
         private void SetStandbyTime(uint time = 0)
         {
-            var rc = SleepTimes.SetStandbyTime(time);
-            if (rc)
+            if (SleepTimes != null)
             {
-                StandbyTextBox.Text = time.ToString();
-                StandbySlider.Value = time;
-            }
-            else
-            {
-                WriteStatus(SleepTimes.ErrorMessage, Level.Warning);
-                StandbyTextBox.Text = SleepTimes.StandbyTime.ToString();
-                StandbySlider.Value = SleepTimes.StandbyTime;
+                var rc = SleepTimes.SetStandbyTime(time);
+                if (rc)
+                {
+                    StandbyTextBox.Text = time.ToString();
+                    StandbySlider.Value = time;
+                }
+                else
+                {
+                    WriteStatus(SleepTimes.ErrorMessage, Level.Warning);
+                    StandbyTextBox.Text = SleepTimes.StandbyTime.ToString();
+                    StandbySlider.Value = SleepTimes.StandbyTime;
+                }
             }
             return;
         }
@@ -120,17 +132,20 @@ namespace Hibernation
         /// <param name="time">セットする休止時間</param>
         private void SetHibernationTime(uint time = 0)
         {
-            var rc = SleepTimes.SetHibernationTime(time);
-            if (rc)
+            if (SleepTimes != null)
             {
-                HibernationTextBox.Text = time.ToString();
-                HibernationSlider.Value = time;
-            }
-            else
-            {
-                WriteStatus(SleepTimes.ErrorMessage, Level.Warning);
-                HibernationTextBox.Text = SleepTimes.HibernationTime.ToString();
-                HibernationSlider.Value = SleepTimes.HibernationTime;
+                var rc = SleepTimes.SetHibernationTime(time);
+                if (rc)
+                {
+                    HibernationTextBox.Text = time.ToString();
+                    HibernationSlider.Value = time;
+                }
+                else
+                {
+                    WriteStatus(SleepTimes.ErrorMessage, Level.Warning);
+                    HibernationTextBox.Text = SleepTimes.HibernationTime.ToString();
+                    HibernationSlider.Value = SleepTimes.HibernationTime;
+                }
             }
             return;
         }
@@ -241,6 +256,24 @@ namespace Hibernation
             return;
         }
 
+        private uint GetSleepTime(in string time_text)
+        {
+            uint return_time = 1000;    // MaxSleepTimeよりも大きい値
+            try
+            {
+                uint time = UInt32.Parse(time_text);
+                if (time >= 0)
+                {
+                    return_time = (time / 10) * 10;
+                }
+            }
+            catch
+            {
+                // 何もしない
+            }
+            return return_time;
+        }
+
         /// <summary>
         /// スタンバイ時間の入力対応
         /// </summary>
@@ -248,17 +281,21 @@ namespace Hibernation
         /// <param name="e"></param>
         private void StandbyTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            try
+            var time = GetSleepTime(StandbyTextBox.Text);
+            if (time <= MaxSleepTime)
             {
-                var time_text = StandbyTextBox.Text;
-                var time = UInt32.Parse(time_text);
                 SetStandbyTime(time);
             }
-            catch
+            else
             {
-                StandbyTextBox.Text = SleepTimes.StandbyTime.ToString();
-                WriteStatus("数値を入れて下さい");
+                if (SleepTimes != null)
+                {
+
+                    StandbyTextBox.Text = SleepTimes.StandbyTime.ToString();
+                    WriteStatus("0～480の数値を入れて下さい", Level.Caution);
+                }
             }
+            return;
         }
 
         /// <summary>
@@ -268,17 +305,21 @@ namespace Hibernation
         /// <param name="e"></param>
         private void HibernationTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            try
+            var time = GetSleepTime(HibernationTextBox.Text);
+            if (time <= MaxSleepTime)
             {
-                var time_text = HibernationTextBox.Text;
-                var time = UInt32.Parse(time_text);
                 SetHibernationTime(time);
             }
-            catch
+            else
             {
-                HibernationTextBox.Text = SleepTimes.HibernationTime.ToString();
-                WriteStatus("数値を入れて下さい");
+                if (SleepTimes != null)
+                {
+
+                    HibernationTextBox.Text = SleepTimes.HibernationTime.ToString();
+                    WriteStatus("0～480の数値を入れて下さい", Level.Caution);
+                }
             }
+            return;
         }
     }
 }

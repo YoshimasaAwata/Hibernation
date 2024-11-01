@@ -46,7 +46,10 @@ namespace Hibernation
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public PowerConfig() { GetActiveSchemeGUID(); }
+        public PowerConfig()
+        {
+            GetActiveSchemeGUID();
+        }
 
         /// <summary>
         /// powercfgコマンドの実行
