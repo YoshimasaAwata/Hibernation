@@ -17,14 +17,6 @@ namespace Hibernation
         /// 設定用休止時間
         /// </summary>
         public uint HibernationTime { get; set; } = 0;
-        /// <summary>
-        /// 現在設定されているスタンバイ時間
-        /// </summary>
-        protected uint CurrentStandbyTime { get; set; } = 0;
-        /// <summary>
-        /// 現在設定されている休止時間
-        /// </summary>
-        protected uint CurrentHibernationTime { get; set; } = 0;
 
         /// <summary>
         /// powerconfigコマンドを用いたスリープ時間の設定、取得
@@ -41,10 +33,19 @@ namespace Hibernation
         /// </summary>
         public SleepTimes()
         {
-            CurrentStandbyTime = PowerConfig.GetStandbyTime();
-            CurrentHibernationTime = PowerConfig.GetHibernationTime();
-            StandbyTime = CurrentStandbyTime;
-            HibernationTime = CurrentHibernationTime;
+            StandbyTime = PowerConfig.GetStandbyTime();
+            HibernationTime = PowerConfig.GetHibernationTime();
+        }
+
+        /// <summary>
+        /// スタンバイ時間と休止時間が正しく設定されているかチェック
+        /// </summary>
+        /// <returns>正しくセットされているか</returns>
+        /// <value>true: 正しくセットされている</value>
+        /// <value>false: 正しくセットされていない</value>
+        public bool CheckSleepTime()
+        {
+            return (StandbyTime == 0) || (HibernationTime == 0) || (StandbyTime <= HibernationTime);
         }
 
         /// <summary>
@@ -54,15 +55,12 @@ namespace Hibernation
         /// <returns>成否</returns>
         public bool SetStandbyTime(uint time)
         {
-            bool rc = true;
-            if ((time == 0) || (HibernationTime == 0) || (time < HibernationTime))
-            {
-                StandbyTime = time;
-            }
-            else
+            ErrorMessage = string.Empty;
+            StandbyTime = time;
+            bool rc = CheckSleepTime();
+            if (!rc)
             {
                 ErrorMessage = "スタンバイ時間が休止時間より長い";
-                rc = false;
             }
             return rc;
         }
@@ -74,15 +72,12 @@ namespace Hibernation
         /// <returns>成否</returns>
         public bool SetHibernationTime(uint time)
         {
-            bool rc = true;
-            if ((time == 0) || (time >= StandbyTime))
+            ErrorMessage = string.Empty;
+            HibernationTime = time;
+            bool rc = CheckSleepTime();
+            if (!rc)
             {
-                HibernationTime = time;
-            }
-            else
-            {
-                ErrorMessage = "休止時間がスタンバイ時間がより短い";
-                rc = false;
+                ErrorMessage = "スタンバイ時間が休止時間より長い";
             }
             return rc;
         }
@@ -95,17 +90,9 @@ namespace Hibernation
         /// <value>false: 失敗</value>
         public bool SetSleepTime()
         {
-            bool rc = true;
-            if (CurrentStandbyTime != StandbyTime)
-            {
-                var standby_time = PowerConfig.SetStanbyTime((int)StandbyTime);
-                if (standby_time != StandbyTime)
-                {
-                    ErrorMessage = PowerConfig.ErrorMessage;
-                    rc = false;
-                }
-            }
-            if (rc && (CurrentHibernationTime != HibernationTime))
+            ErrorMessage = string.Empty;
+            bool rc = CheckSleepTime();
+            if (rc)
             {
                 var hibernation_time = PowerConfig.SetHibernationTime((int)HibernationTime);
                 if (hibernation_time != HibernationTime)
@@ -113,6 +100,16 @@ namespace Hibernation
                     ErrorMessage = PowerConfig.ErrorMessage;
                     rc = false;
                 }
+                var standby_time = PowerConfig.SetStanbyTime((int)StandbyTime);
+                if (standby_time != StandbyTime)
+                {
+                    ErrorMessage += PowerConfig.ErrorMessage;
+                    rc = false;
+                }
+            }
+            else
+            {
+                ErrorMessage = "スリープ時間が正しくセットされていません";
             }
             return rc;
         }

@@ -179,7 +179,7 @@ namespace Hibernation
                 time = 0;
             }
             var hibernation = GetHibernationTime();
-            if ((time == 0) || (hibernation == 0) || (hibernation > time))
+            if ((time == 0) || (hibernation == 0) || (hibernation >= time))
             {
                 rc = SetSleepTime(StandbyTimeoutAC, time);
             }

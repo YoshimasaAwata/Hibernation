@@ -9,6 +9,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Xml;
 
 namespace Hibernation
 {
@@ -51,7 +52,12 @@ namespace Hibernation
             HibernationSlider.Value = SleepTimes.HibernationTime;
         }
 
-        private void WriteStatus(string text, Level level = Level.Normal)
+        /// <summary>
+        /// ステータスにテキストを表示
+        /// </summary>
+        /// <param name="text">表示するテキスト</param>
+        /// <param name="level">表示するテキストの色のレベル</param>
+        private void WriteStatus(string text = "", Level level = Level.Normal)
         {
             if (level == Level.Normal)
             {
@@ -59,13 +65,37 @@ namespace Hibernation
             }
             else if (level == Level.Caution)
             {
-                StatusTextBlock.Foreground = Brushes.Yellow;
+                StatusTextBlock.Foreground = Brushes.GreenYellow;
             }
             else
             {
                 StatusTextBlock.Foreground = Brushes.Red;
             }
             StatusTextBlock.Text = text;
+            return;
+        }
+
+        /// <summary>
+        /// セットボタンを有効化/無効化する
+        /// </summary>
+        /// <remarks>
+        /// 無効化する場合にはStandbyTextBoxやHibernationTextBoxを赤枠とする
+        /// </remarks>
+        /// <param name="enable">有効化(true)/無効化(false)の指定</param>
+        private void EnableSetButton(bool enable = true)
+        {
+            if (enable)
+            {
+                SetButton.IsEnabled = true;
+                StandbyBorder.BorderBrush = Brushes.Black;
+                HibernationBorder.BorderBrush = Brushes.Black;
+            }
+            else
+            {
+                SetButton.IsEnabled = false;
+                StandbyBorder.BorderBrush = Brushes.Red;
+                HibernationBorder.BorderBrush = Brushes.Red;
+            }
             return;
         }
 
@@ -110,17 +140,15 @@ namespace Hibernation
         {
             if (SleepTimes != null)
             {
+                EnableSetButton();
+                WriteStatus();
+                StandbyTextBox.Text = time.ToString();
+                StandbySlider.Value = time;
                 var rc = SleepTimes.SetStandbyTime(time);
-                if (rc)
+                if (!rc)
                 {
-                    StandbyTextBox.Text = time.ToString();
-                    StandbySlider.Value = time;
-                }
-                else
-                {
+                    EnableSetButton(false);
                     WriteStatus(SleepTimes.ErrorMessage, Level.Warning);
-                    StandbyTextBox.Text = SleepTimes.StandbyTime.ToString();
-                    StandbySlider.Value = SleepTimes.StandbyTime;
                 }
             }
             return;
@@ -134,17 +162,15 @@ namespace Hibernation
         {
             if (SleepTimes != null)
             {
+                EnableSetButton();
+                WriteStatus();
+                HibernationTextBox.Text = time.ToString();
+                HibernationSlider.Value = time;
                 var rc = SleepTimes.SetHibernationTime(time);
-                if (rc)
+                if (!rc)
                 {
-                    HibernationTextBox.Text = time.ToString();
-                    HibernationSlider.Value = time;
-                }
-                else
-                {
+                    EnableSetButton(false);
                     WriteStatus(SleepTimes.ErrorMessage, Level.Warning);
-                    HibernationTextBox.Text = SleepTimes.HibernationTime.ToString();
-                    HibernationSlider.Value = SleepTimes.HibernationTime;
                 }
             }
             return;
@@ -256,6 +282,15 @@ namespace Hibernation
             return;
         }
 
+        /// <summary>
+        /// 時間を示す文字列から0以上の整数を取得
+        /// </summary>
+        /// <remarks>
+        /// 変換後の数値は10刻み<br/>
+        /// 変換失敗時にはMaxSleepTimeよりも大きい値が返る
+        /// </remarks>
+        /// <param name="time_text">時間を示す文字列</param>
+        /// <returns>0以上の整数</returns>
         private uint GetSleepTime(in string time_text)
         {
             uint return_time = 1000;    // MaxSleepTimeよりも大きい値
@@ -314,7 +349,6 @@ namespace Hibernation
             {
                 if (SleepTimes != null)
                 {
-
                     HibernationTextBox.Text = SleepTimes.HibernationTime.ToString();
                     WriteStatus("0～480の数値を入れて下さい", Level.Caution);
                 }
