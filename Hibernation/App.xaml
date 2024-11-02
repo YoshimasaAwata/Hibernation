@@ -10,8 +10,8 @@
                 <!-- Theme -->
                 <materialDesign:MahAppsBundledTheme
                     BaseTheme="Light"
-                    PrimaryColor="BlueGrey"
-                    SecondaryColor="LightGreen" />
+                    PrimaryColor="Lime"
+                    SecondaryColor="Amber" />
                 <!-- MahApps -->
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
