@@ -10,13 +10,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml;
+using MahApps.Metro.Controls;
 
 namespace Hibernation
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : MetroWindow
     {
         /// <summary>
         /// 警告レベル
@@ -386,6 +387,18 @@ namespace Hibernation
                 Properties.Settings.Default.Save();
                 WriteStatus("スリープ時間をストアしました");
             }
+            return;
+        }
+
+        /// <summary>
+        /// AboutBoxを表示
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void AboutButton_Click(object sender, RoutedEventArgs e)
+        {
+            var about = new AboutBox();
+            about.ShowDialog();
             return;
         }
     }
