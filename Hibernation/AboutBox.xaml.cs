@@ -56,9 +56,14 @@ namespace Hibernation
             PackageList.ItemsSource = s_packages;
             PackageList.SelectedIndex = 0;
 
-            var assembly = Assembly.GetExecutingAssembly().GetName();
-            var version = assembly.Version;
-            VersionTextBlock.Text = version?.ToString();
+            //var assembly = Assembly.GetExecutingAssembly().GetName();
+            //var version = assembly.Version;
+            //var copyright = assembly
+            //VersionTextBlock.Text = version?.ToString();
+
+            var assembly = Assembly.GetExecutingAssembly();
+            VersionTextBlock.Text = assembly?.GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version;
+            CopyrightTextBlock.Text = assembly?.GetCustomAttribute<AssemblyCopyrightAttribute>()?.Copyright;
 
             this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
         }
