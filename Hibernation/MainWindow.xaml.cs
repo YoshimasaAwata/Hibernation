@@ -42,6 +42,9 @@ namespace Hibernation
         /// <summary>
         /// 現在のスリープ時間をダイアログに反映
         /// </summary>
+        /// <remarks>
+        /// スリープ時間が共に0なら一時停止ボタンを無効化しておく
+        /// </remarks>
         public MainWindow()
         {
             InitializeComponent();
@@ -51,6 +54,11 @@ namespace Hibernation
             StandbySlider.Value = SleepTimes.StandbyTime;
             HibernationTextBox.Text = SleepTimes.HibernationTime.ToString();
             HibernationSlider.Value = SleepTimes.HibernationTime;
+
+            if ((SleepTimes.StandbyTime == 0) && (SleepTimes.HibernationTime == 0))
+            {
+                PauseButton.IsEnabled = false;
+            }
         }
 
         /// <summary>
@@ -112,6 +120,20 @@ namespace Hibernation
         }
 
         /// <summary>
+        /// スリープ時間の設定で一時停止ボタンを有効化/無効化する
+        /// </summary>
+        private void EnablePauseButton()
+        {
+            if (SleepTimes != null)
+            {
+                var stanby = SleepTimes.CurrentStandbyTime;
+                var hibernation = SleepTimes.CurrentHibernationTime;
+                PauseButton.IsEnabled = (stanby != 0) || (hibernation != 0);
+            }
+            return;
+        }
+
+        /// <summary>
         /// 指定のスリープ時間をセット
         /// </summary>
         /// <param name="sender"></param>
@@ -129,6 +151,7 @@ namespace Hibernation
                 {
                     WriteStatus("スリープ時間のセットに失敗", Level.Warning);
                 }
+                EnablePauseButton();
             }
             return;
         }
@@ -400,6 +423,53 @@ namespace Hibernation
             var about = new AboutBox();
             about.ShowDialog();
             return;
+        }
+
+        /// <summary>
+        /// Closeボタンと一時停止ボタン以外を有効化/無効化する
+        /// </summary>
+        /// <param name="enable">true:有効化/false:無効化</param>
+        private void EnableAllComponents(bool enable = true)
+        {
+            StandbySlider.IsEnabled = enable;
+            StandbyTextBox.IsEnabled = enable;
+            ClearStandbyButton.IsEnabled = enable;
+
+            HibernationSlider.IsEnabled = enable;
+            HibernationTextBox.IsEnabled = enable;
+            ClearHibernationButton.IsEnabled = enable;
+
+            SaveButton.IsEnabled = enable;
+            RestoreButton.IsEnabled = enable;
+            ClearAllButton.IsEnabled = enable;
+            SetButton.IsEnabled = enable;
+
+            return;
+        }
+
+        private void PauseButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (SleepTimes != null)
+            {
+                if (SleepTimes.Paused)
+                {
+                    var rc = SleepTimes.DisablePause();
+                    if (rc)
+                    {
+                        EnableAllComponents();
+                        PauseButton.Content = "Pause(スリープ設定停止)";
+                    }
+                }
+                else
+                {
+                    var rc = SleepTimes.EnablePause();
+                    if (rc)
+                    {
+                        EnableAllComponents(false);
+                        PauseButton.Content = "Resume(スリープ設定再開)";
+                    }
+                }
+            }
         }
     }
 }

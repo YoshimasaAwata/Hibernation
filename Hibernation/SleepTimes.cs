@@ -19,6 +19,28 @@ namespace Hibernation
         public uint HibernationTime { get; set; } = 0;
 
         /// <summary>
+        /// 実際のスタンバイ時間
+        /// </summary>
+        public uint CurrentStandbyTime { get; set; } = 0;
+        /// <summary>
+        /// 実際の休止時間
+        /// </summary>
+        public uint CurrentHibernationTime { get; set; } = 0;
+
+        /// <summary>
+        /// 一時停止している(true)か、していない(false)か
+        /// </summary>
+        public bool Paused { get; set; } = false;
+        /// <summary>
+        /// 一時停止前のスタンバイ時間
+        /// </summary>
+        public uint PausedStandbyTime { get; set; } = 0;
+        /// <summary>
+        /// 一時停止前の休止時間
+        /// </summary>
+        public uint PausedHibernationTime { get; set; } = 0;
+
+        /// <summary>
         /// powerconfigコマンドを用いたスリープ時間の設定、取得
         /// </summary>
         protected PowerConfig PowerConfig { get; set; } = new PowerConfig();
@@ -35,6 +57,8 @@ namespace Hibernation
         {
             StandbyTime = PowerConfig.GetStandbyTime();
             HibernationTime = PowerConfig.GetHibernationTime();
+            CurrentStandbyTime = StandbyTime;
+            CurrentHibernationTime = HibernationTime;
         }
 
         /// <summary>
@@ -66,9 +90,9 @@ namespace Hibernation
         }
 
         /// <summary>
-        /// スタンバイ時間のセット
+        /// 休止時間のセット
         /// </summary>
-        /// <param name="time">スタンバイ時間</param>
+        /// <param name="time">休止時間</param>
         /// <returns>成否</returns>
         public bool SetHibernationTime(uint time)
         {
@@ -95,13 +119,21 @@ namespace Hibernation
             if (rc)
             {
                 var hibernation_time = PowerConfig.SetHibernationTime((int)HibernationTime);
-                if (hibernation_time != HibernationTime)
+                if (hibernation_time == HibernationTime)
+                {
+                    CurrentHibernationTime = HibernationTime;
+                }
+                else
                 {
                     ErrorMessage = PowerConfig.ErrorMessage;
                     rc = false;
                 }
                 var standby_time = PowerConfig.SetStanbyTime((int)StandbyTime);
-                if (standby_time != StandbyTime)
+                if (standby_time == StandbyTime)
+                {
+                    CurrentStandbyTime = StandbyTime;
+                }
+                else
                 {
                     ErrorMessage += PowerConfig.ErrorMessage;
                     rc = false;
@@ -112,6 +144,50 @@ namespace Hibernation
                 ErrorMessage = "スリープ時間が正しくセットされていません";
             }
             return rc;
+        }
+
+        /// <summary>
+        /// 一時停止を行う
+        /// </summary>
+        /// <returns>成功(true)/失敗(false)</returns>
+        public bool EnablePause()
+        {
+            if (!Paused)
+            {
+                PausedStandbyTime = StandbyTime;
+                PausedHibernationTime = HibernationTime;
+                StandbyTime = 0;
+                HibernationTime = 0;
+
+                Paused = SetSleepTime();
+                if (!Paused)
+                {
+                    StandbyTime = PausedStandbyTime;
+                    HibernationTime = PausedHibernationTime;
+                }
+            }
+            return Paused;
+        }
+
+        /// <summary>
+        /// 一時停止を中止する
+        /// </summary>
+        /// <returns>成功(true)/失敗(false)</returns>
+        public bool DisablePause()
+        {
+            if (Paused)
+            {
+                StandbyTime = PausedStandbyTime;
+                HibernationTime = PausedHibernationTime;
+
+                Paused = !SetSleepTime();
+                if (Paused)
+                {
+                    PausedStandbyTime = StandbyTime;
+                    PausedHibernationTime = HibernationTime;
+                }
+            }
+            return !Paused;
         }
     }
 }
