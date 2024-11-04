@@ -6,63 +6,67 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Hibernation"
         xmlns:System="clr-namespace:System;assembly=System.Runtime"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         Style="{StaticResource MaterialDesignWindow}"
         mc:Ignorable="d"
         WindowTitleBrush="LightGoldenrodYellow"
         Background="AliceBlue"
-        Title="休止状態/スリープ設定" Height="300" Width="460" ResizeMode="NoResize">
+        ShowCloseButton="False"
+        Title="休止状態/スリープ設定" Height="300" Width="460" ResizeMode="CanMinimize">
     <mah:MetroWindow.RightWindowCommands>
         <mah:WindowCommands>
             <Button x:Name="AboutButton" Content="About" Click="AboutButton_Click"/>
         </mah:WindowCommands>
     </mah:MetroWindow.RightWindowCommands>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="50"/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition Height="50"/>
-            <RowDefinition Height="50"/>
-        </Grid.RowDefinitions>
-        <Button x:Name="PauseButton" Content="Pause(スリープ設定停止)" VerticalAlignment="Center" Margin="100,0,100,0" Click="PauseButton_Click"/>
-        <Grid Margin="10" Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <Label RenderTransformOrigin="-5.591,-0.12" Content="スタンバイ時間：" VerticalAlignment="Center" HorizontalAlignment="Left" Width="96" HorizontalContentAlignment="Right"/>
-            <Slider x:Name="StandbySlider" VerticalAlignment="Center" Grid.Column="1" Maximum="480" IsSnapToTickEnabled="True" SmallChange="10" TickFrequency="10" LargeChange="10" ValueChanged="StandbySlider_ValueChanged"/>
-            <Border x:Name="StandbyBorder" BorderBrush="Black" BorderThickness="1" Grid.Column="2" VerticalAlignment="Center" Margin="5,0,5,0">
-                <TextBox x:Name="StandbyTextBox" TextWrapping="Wrap" Text="0" Width="60" TextAlignment="Right" InputMethod.IsInputMethodEnabled="False" TextInput="StandbyTextBox_TextInput" CommandManager.PreviewExecuted="StandbyTextBox_PreviewExecuted" TextChanged="StandbyTextBox_TextChanged"/>
-            </Border>
-            <Button x:Name="ClearStandbyButton" Content="Clear" Grid.Column="3" VerticalAlignment="Center" Click="ClearStandbyButton_Click"/>
+    <materialDesign:DialogHost>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50"/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="50"/>
+            </Grid.RowDefinitions>
+            <Button x:Name="PauseButton" Content="Pause(スリープ設定停止)" VerticalAlignment="Center" Margin="100,0,100,0" Click="PauseButton_Click"/>
+            <Grid Margin="10" Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Label RenderTransformOrigin="-5.591,-0.12" Content="スタンバイ時間：" VerticalAlignment="Center" HorizontalAlignment="Left" Width="96" HorizontalContentAlignment="Right"/>
+                <Slider x:Name="StandbySlider" VerticalAlignment="Center" Grid.Column="1" Maximum="480" IsSnapToTickEnabled="True" SmallChange="10" TickFrequency="10" LargeChange="10" ValueChanged="StandbySlider_ValueChanged"/>
+                <Border x:Name="StandbyBorder" BorderBrush="Black" BorderThickness="1" Grid.Column="2" VerticalAlignment="Center" Margin="5,0,5,0">
+                    <TextBox x:Name="StandbyTextBox" TextWrapping="Wrap" Text="0" Width="60" TextAlignment="Right" InputMethod.IsInputMethodEnabled="False" TextInput="StandbyTextBox_TextInput" CommandManager.PreviewExecuted="StandbyTextBox_PreviewExecuted" TextChanged="StandbyTextBox_TextChanged"/>
+                </Border>
+                <Button x:Name="ClearStandbyButton" Content="Clear" Grid.Column="3" VerticalAlignment="Center" Click="ClearStandbyButton_Click"/>
+            </Grid>
+            <Grid Margin="10,10,10,10" Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Label RenderTransformOrigin="-5.591,-0.12" Content="　休止時間：" VerticalAlignment="Center" HorizontalAlignment="Left" Width="100" HorizontalContentAlignment="Right"/>
+                <Slider x:Name="HibernationSlider" VerticalAlignment="Center" Grid.Column="1" LargeChange="10" Maximum="480" SmallChange="10" TickFrequency="10" IsSnapToTickEnabled="True" ValueChanged="HibernationSlider_ValueChanged"/>
+                <Border x:Name="HibernationBorder" BorderBrush="Black" BorderThickness="1" Grid.Column="2" VerticalAlignment="Center" Margin="5,0,5,0">
+                    <TextBox x:Name="HibernationTextBox" TextWrapping="Wrap" Text="0" Width="60" TextAlignment="Right" InputMethod.IsInputMethodEnabled="False" TextInput="HibernationTextBox_TextInput" CommandManager.PreviewExecuted="HibernationTextBox_PreviewExecuted"  TextChanged="HibernationTextBox_TextChanged"/>
+                </Border>
+                <Button x:Name="ClearHibernationButton" Content="Clear" Grid.Column="3" VerticalAlignment="Center" Click="ClearHibernationButton_Click"/>
+            </Grid>
+            <StatusBar Grid.Row="3" Margin="10">
+                <Label Content="ステータス: " HorizontalAlignment="Center" VerticalAlignment="Top"/>
+                <TextBlock x:Name="StatusTextBlock" />
+            </StatusBar>
+            <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" FlowDirection="RightToLeft" Margin="10,0,10,0">
+                <Button x:Name="CloseButton" Content="Close" HorizontalAlignment="Center" VerticalAlignment="Center" Height="20" Width="60" Margin="5" IsDefault="True" Click="CloseButton_Click" Padding="0"/>
+                <Button x:Name="SetButton" Content="Set" HorizontalAlignment="Center" VerticalAlignment="Center" Height="20" Width="60" Margin="5" Click="SetButton_Click" Padding="0"/>
+                <Button x:Name="ClearAllButton" Content="Clear All" HorizontalAlignment="Center" VerticalAlignment="Center" Height="20" Width="60" Margin="5" Click="ClearAllButton_Click" Padding="0"/>
+                <Button x:Name="RestoreButton" Content="Restore" HorizontalAlignment="Center" VerticalAlignment="Center" Height="20" Width="60" Margin="5" Click="RestoreButton_Click" Padding="0"/>
+                <Button x:Name="SaveButton" Content="Save" HorizontalAlignment="Center" VerticalAlignment="Center" Height="20" Width="60" Margin="5" Click="SaveButton_Click" Padding="0"/>
+            </StackPanel>
         </Grid>
-        <Grid Margin="10,10,10,10" Grid.Row="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <Label RenderTransformOrigin="-5.591,-0.12" Content="　休止時間：" VerticalAlignment="Center" HorizontalAlignment="Left" Width="100" HorizontalContentAlignment="Right"/>
-            <Slider x:Name="HibernationSlider" VerticalAlignment="Center" Grid.Column="1" LargeChange="10" Maximum="480" SmallChange="10" TickFrequency="10" IsSnapToTickEnabled="True" ValueChanged="HibernationSlider_ValueChanged"/>
-            <Border x:Name="HibernationBorder" BorderBrush="Black" BorderThickness="1" Grid.Column="2" VerticalAlignment="Center" Margin="5,0,5,0">
-                <TextBox x:Name="HibernationTextBox" TextWrapping="Wrap" Text="0" Width="60" TextAlignment="Right" InputMethod.IsInputMethodEnabled="False" TextInput="HibernationTextBox_TextInput" CommandManager.PreviewExecuted="HibernationTextBox_PreviewExecuted"  TextChanged="HibernationTextBox_TextChanged"/>
-            </Border>
-            <Button x:Name="ClearHibernationButton" Content="Clear" Grid.Column="3" VerticalAlignment="Center" Click="ClearHibernationButton_Click"/>
-        </Grid>
-        <StatusBar Grid.Row="3" Margin="10">
-            <Label Content="ステータス: " HorizontalAlignment="Center" VerticalAlignment="Top"/>
-            <TextBlock x:Name="StatusTextBlock" />
-        </StatusBar>
-        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" FlowDirection="RightToLeft" Margin="10,0,10,0">
-            <Button x:Name="CloseButton" Content="Close" HorizontalAlignment="Center" VerticalAlignment="Center" Height="20" Width="60" Margin="5" IsDefault="True" Click="CloseButton_Click" Padding="0"/>
-            <Button x:Name="SetButton" Content="Set" HorizontalAlignment="Center" VerticalAlignment="Center" Height="20" Width="60" Margin="5" Click="SetButton_Click" Padding="0"/>
-            <Button x:Name="ClearAllButton" Content="Clear All" HorizontalAlignment="Center" VerticalAlignment="Center" Height="20" Width="60" Margin="5" Click="ClearAllButton_Click" Padding="0"/>
-            <Button x:Name="RestoreButton" Content="Restore" HorizontalAlignment="Center" VerticalAlignment="Center" Height="20" Width="60" Margin="5" Click="RestoreButton_Click" Padding="0"/>
-            <Button x:Name="SaveButton" Content="Save" HorizontalAlignment="Center" VerticalAlignment="Center" Height="20" Width="60" Margin="5" Click="SaveButton_Click" Padding="0"/>
-        </StackPanel>
-    </Grid>
+    </materialDesign:DialogHost>
 </mah:MetroWindow>

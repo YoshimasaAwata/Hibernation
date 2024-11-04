@@ -11,6 +11,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml;
 using MahApps.Metro.Controls;
+using MaterialDesignThemes.Wpf;
 
 namespace Hibernation
 {
@@ -109,13 +110,30 @@ namespace Hibernation
         }
 
         /// <summary>
-        /// ダイアログをクローズ
+        /// アプリケーションの終了
         /// </summary>
+        /// <remarks>
+        /// <para>休止を一時停止している場合には、一時停止の中止を確認するダイアログを表示</para>
+        /// <para>中止OKなら一時停止を中断してからアプリケーションの終了</para>
+        /// <para>中止NOならなにもしない</para>
+        /// </remarks>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        private async void CloseButton_Click(object sender, RoutedEventArgs e)
         {
-            Close();
+            var dialog = new CloseUserControl();
+            if ((SleepTimes != null) && (SleepTimes.Paused))
+            {
+                await DialogHost.Show(dialog);
+                if (!dialog.Cancelled)
+                {
+                    SleepTimes.DisablePause();
+                }
+            }
+            if (!dialog.Cancelled)
+            {
+                Application.Current.Shutdown();
+            }
             return;
         }
 
@@ -447,6 +465,15 @@ namespace Hibernation
             return;
         }
 
+        /// <summary>
+        /// 一時停止ボタンのクリック
+        /// </summary>
+        /// <remarks>
+        /// <para>一時停止してなければ他のコンポーネントを無効化して一時停止</para>
+        /// <para>一時停止中なら他のコンポーネントを有効化して一時停止解除</para>
+        /// </remarks>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void PauseButton_Click(object sender, RoutedEventArgs e)
         {
             if (SleepTimes != null)
@@ -470,6 +497,7 @@ namespace Hibernation
                     }
                 }
             }
+            return;
         }
     }
 }

@@ -27,7 +27,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_6D2FD9934F2D4839854BA1B6CE74D2A8"
+        "MsmKey" = "8:_74A561F73ACB40D193A8EA220C5E683D"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -56,6 +56,14 @@
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:"
             "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.7.2"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.7.2 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.7.2"
+                    }
+                }
             }
         }
         "Release"
@@ -160,9 +168,9 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6D2FD9934F2D4839854BA1B6CE74D2A8"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_74A561F73ACB40D193A8EA220C5E683D"
             {
-            "SourcePath" = "8:..\\Hibernation\\hibernation.ico"
+            "SourcePath" = "8:..\\Hibernation\\Resources\\hibernation.ico"
             "TargetName" = "8:hibernation.ico"
             "Tag" = "8:"
             "Folder" = "8:_141AA46874B6493A986F6B1A2674AFBE"
@@ -248,14 +256,14 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Hibernation"
         "ProductCode" = "8:{E8FE5A27-FC2D-4145-957F-17E59EA064D6}"
-        "PackageCode" = "8:{C9874700-328A-4918-8CF3-74FDCC1AA06A}"
+        "PackageCode" = "8:{0B6B5D4E-5DED-4D0F-BDE2-8DB15E346FA7}"
         "UpgradeCode" = "8:{D4DBF31B-DBD4-4D16-AF6D-D4963D645366}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:1.0.0"
+        "ProductVersion" = "8:1.1.0"
         "Manufacturer" = "8:yoshia"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -379,7 +387,7 @@
             "Target" = "8:_4A93DA444261491C8AD6DAC8E3043C17"
             "Folder" = "8:_F2999D77646748B68D787C3748CCEB51"
             "WorkingFolder" = "8:_141AA46874B6493A986F6B1A2674AFBE"
-            "Icon" = "8:_6D2FD9934F2D4839854BA1B6CE74D2A8"
+            "Icon" = "8:_74A561F73ACB40D193A8EA220C5E683D"
             "Feature" = "8:"
             }
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_F1EB20EF78AF4784B0998AA099E7F515"
@@ -393,7 +401,7 @@
             "Target" = "8:_4A93DA444261491C8AD6DAC8E3043C17"
             "Folder" = "8:_D7FB4A50093B4D11A5FE6F7C26CEB1E5"
             "WorkingFolder" = "8:_141AA46874B6493A986F6B1A2674AFBE"
-            "Icon" = "8:_6D2FD9934F2D4839854BA1B6CE74D2A8"
+            "Icon" = "8:_74A561F73ACB40D193A8EA220C5E683D"
             "Feature" = "8:"
             }
         }
